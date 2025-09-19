@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Search Results — Fun Online Quizzes</title>
+  <style>
+    body { font-family: sans-serif; background: #0b0f14; color: #eff6ff; margin: 0; }
+    .container { max-width: 800px; margin: 40px auto; padding: 20px; }
+    h1 { font-size: 22px; margin: 0 0 14px; color: #9bd2ff; }
+    .results { display: flex; flex-direction: column; gap: 16px; }
+    .card { background:#121821; border:1px solid #1e293b; border-radius:12px; padding:16px; }
+    .card h3 { margin:0 0 8px; font-size:20px; }
+    .card a { color:#9bd2ff; text-decoration:none; }
+    .card a:hover { text-decoration:underline; }
+    .desc { color:#c3d1e3; font-size:14px; }
+    .message { text-align: center; padding: 60px 20px; background: #121821; border: 1px solid #1e293b; border-radius: 12px; }
+    .message h2 { margin: 0 0 12px; font-size: 24px; color: #9bd2ff; }
+    .message p { margin: 0 0 20px; color: #c3d1e3; }
+    .btn { background: linear-gradient(180deg, #22d3ee, #0ea5e9); color: #05202b; border: none; padding: 12px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; }
+    .btn:hover { filter: brightness(1.1); }
+    .toolbar { display:flex; gap:8px; margin: 0 0 16px; }
+    .input { flex:1; min-width: 200px; background:#0f172a; border:1px solid #1e293b; color:#eff6ff; padding:10px 12px; border-radius:10px; }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>Search Results — Fun Online Quizzes</h1>
+    <div class="toolbar">
+      <input id="q" class="input" type="search" placeholder="Search quizzes (e.g., trivia, personality, music)" />
+      <button class="btn" onclick="doSearch()">Search</button>
+      <button class="btn" onclick="resetSearch()">Clear</button>
+    </div>
+
+    <div id="results" class="results"></div>
+    <div id="empty" class="message" style="display:none;">
+      <h2>No results found</h2>
+      <p>We couldn’t find any quizzes that match your search. Try keywords like “trivia,” “personality,” or “music,” or clear to see popular picks.</p>
+      <button class="btn" onclick="resetSearch()">Clear & Show All</button>
+    </div>
+  </main>
+
+  <script>
+    const allQuizzes = [
+      {title:"BuzzFeed — Trending Quizzes", url:"https://www.buzzfeed.com/quizzes", desc:"Viral personality tests, pop culture trivia, and just-for-fun lists."},
+      {title:"Sporcle — Trivia Quizzes", url:"https://www.sporcle.com/", desc:"Thousands of timed quizzes on geography, movies, sports, and more."},
+      {title:"JetPunk — Name the...", url:"https://www.jetpunk.com/", desc:"Addictive fill-in-the-blank quizzes like country names, flags, and capitals."},
+      {title:"16Personalities — Personality Test", url:"https://www.16personalities.com/free-personality-test", desc:"Take the MBTI-style personality quiz and share your results."},
+      {title:"Kahoot! — Discover Public Quizzes", url:"https://kahoot.com/discover", desc:"Browse ready-to-play quizzes across school subjects and fun topics."},
+      {title:"Quizizz — Explore", url:"https://quizizz.com/", desc:"Join or create multiplayer quizzes—education topics and general fun."},
+      {title:"Music Quiz — Song Trivia", url:"https://songtrivia2.io/", desc:"Guess-the-song quizzes you can play with friends online."}
+    ];
+
+    const resultsEl = document.getElementById('results');
+    const emptyEl = document.getElementById('empty');
+    const qEl = document.getElementById('q');
+
+    function render(list){
+      resultsEl.innerHTML = '';
+      if(!list || list.length === 0){
+        emptyEl.style.display = 'block';
+        return;
+      }
+      emptyEl.style.display = 'none';
+      list.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `<h3><a href="${item.url}" target="_blank" rel="noopener">${item.title}</a></h3><p class="desc">${item.desc}</p>`;
+        resultsEl.appendChild(card);
+      });
+    }
+
+    function doSearch(){
+      const term = (qEl.value || '').trim().toLowerCase();
+      if(!term){ render(allQuizzes); return; }
+      const terms = term.split(/\s+/).filter(Boolean);
+      const filtered = allQuizzes.filter(q => {
+        const hay = (q.title + ' ' + q.desc).toLowerCase();
+        return terms.some(t => hay.includes(t)); // OR match for friendlier results
+      });
+      render(filtered);
+    }
+
+    function resetSearch(){
+      qEl.value = '';
+      render(allQuizzes);
+    }
+
+    // Initial render
+    render(allQuizzes);
+  </script>
+</body>
+</html>
